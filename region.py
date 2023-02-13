@@ -9,9 +9,8 @@ def random(size):
 
 class Region:
 
-    cross_list = []
-
     def __init__(self, size):
+        self.cross_list = []
         self.size = size
         self.fc_net = random((size, size))  # 当前 region 的全连接矩阵
         self.output_v = random((size, 1))   # 当前 region 的神经元输出向量
@@ -20,7 +19,8 @@ class Region:
 
     def join_cross(self, v):
         self.cross_list.append(v)
-        self.cross_net = np.hstack(self.cross_net, random((self.cross_net.shape[0], v.shape[1])))
+        self.cross_net = np.hstack([self.cross_net, random((self.cross_net.shape[0], v.shape[0]))])
+        print(self.cross_net.shape)
 
     def exit_cross(self, v):
         for cross_v_item in self.cross_list:
@@ -38,6 +38,9 @@ class Region:
         vector = np.vstack([self.output_v, cross_v])
         # 组装全连接矩阵和输入权重矩阵
         matrix = np.hstack([self.fc_net, self.cross_net])
+        print(self.fc_net.shape)
+        print(matrix.shape)
+        print(self.cross_net.shape)
 
         output = matrix.dot(vector) - 1
         output = output / np.power(self.size, 0.5)

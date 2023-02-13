@@ -1,6 +1,8 @@
 import region as reg
 
-region = reg.Region(100)
-print(region.output_v)
-region.iterate()
-print(region.output_v)
+regionA = reg.Region(100)
+regionB = reg.Region(100)
+regionB.join_cross(regionA.output_v)
+print(regionA.output_v)
+regionB.iterate()
+print(regionA.output_v)
