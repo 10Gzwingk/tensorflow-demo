@@ -20,7 +20,6 @@ class Region:
     def join_cross(self, v):
         self.cross_list.append(v)
         self.cross_net = np.hstack([self.cross_net, random((self.cross_net.shape[0], v.shape[0]))])
-        print(self.cross_net.shape)
 
     def exit_cross(self, v):
         for cross_v_item in self.cross_list:
@@ -38,15 +37,23 @@ class Region:
         vector = np.vstack([self.output_v, cross_v])
         # 组装全连接矩阵和输入权重矩阵
         matrix = np.hstack([self.fc_net, self.cross_net])
-        print(self.fc_net.shape)
-        print(matrix.shape)
-        print(self.cross_net.shape)
 
+        # 原始输出线性归一化
         output = matrix.dot(vector) - 1
         output = output / np.power(self.size, 0.5)
         output_v = np.minimum(output, np.ones((self.size, 1)))
 
+        # 激活
+        sign = output_v / np.abs(output_v)
+        output_v = np.abs(output_v)
+        output_v = np.maximum(output_v - self.offset_v, 0)
+        output_v = np.minimum(output_v, 1)
+        output_v = output_v * sign
+
         if output_v.shape != self.output_v.shape:
             print("[error] shape mismatch")
 
+        # 输出
         self.output_v = output_v
+
+        # TODO 更新权重
