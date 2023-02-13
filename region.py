@@ -38,7 +38,7 @@ class Region:
         # 组装全连接矩阵和输入权重矩阵
         matrix = np.hstack([self.fc_net, self.cross_net])
 
-        # 原始输出线性归一化
+        # 原始输出，由二次非归一，转为线性归一化
         output = matrix.dot(vector) - 1
         output = output / np.power(self.size, 0.5)
         output_v = np.minimum(output, np.ones((self.size, 1)))
