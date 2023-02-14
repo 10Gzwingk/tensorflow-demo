@@ -14,12 +14,13 @@ class Region:
     def __init__(self, size):
         self.cross_list = []
         self.size = size
-        self.fc_net = random((size, size + 1))  # 当前 region 的全连接矩阵
-        self.step = random((size, size + 1))    # 神经元记忆步长
-        self.base = random((size, size + 1))    # 神经元记忆偏置，输入信号大于 base 的才进行强化，小于 base 的则弱化
-        self.output_v = random((size + 1, 1))   # 当前 region 的神经元输出向量，维度不可变
-        self.output_v[size, 0] = 1
+        self.fc_net = random((size, size))  # 当前 region 的全连接矩阵
+        self.step = random((size, size))    # 神经元记忆步长
+        self.base = random((size, size))    # 神经元记忆偏置，输入信号大于 base 的才进行强化，小于 base 的则弱化
+        self.output_v = random((size, 1))   # 当前 region 的神经元输出向量，维度不可变
         self.offset_v = random((size, 1))
+        self.offset_base = random((size, 1))
+        self.offset_step = random((size, 1))
 
     def join_cross(self, v):
         self.cross_list.append(v)
@@ -60,9 +61,14 @@ class Region:
         self.output_v = output_v
 
         # 基于本次的输入更新权重
-        self.fc_net = self.update(self.fc_net, vector)
+        self.fc_net = np.arctan(
+            (np.ones((self.size, 1)) * np.transpose(vector) - self.base) * self.step + np.tan(self.fc_net * math.pi / 2)
+        ) / (math.pi / 2)
         # 根据输出更新偏移
-        self.fc_net[:, self.size] = self.update(self.fc_net[:, self.size], self.output_v)
+        # self.offset_v = self.update(self.offset_v, self.output_v)
+        self.fc_net = np.arctan(
+            (self.output_v - self.base) * self.offset_step + np.tan(self.offset_v * math.pi / 2)
+        ) / (math.pi / 2)
 
     def update(self, x, v):
-        return np.arctan((v - self.base) * self.step + np.tan(x * math.pi / 2)) / (math.pi / 2)
+        return np.arctan((np.ones((self.size, 1)) * np.transpose(v) - self.base) * self.step + np.tan(x * math.pi / 2)) / (math.pi / 2)
