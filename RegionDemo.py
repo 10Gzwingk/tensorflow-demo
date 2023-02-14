@@ -1,5 +1,7 @@
 import region as reg
+import numpy as np
 
+#
 regionA = reg.Region(100)
 regionB = reg.Region(100)
 regionC = reg.Region(100)
@@ -11,3 +13,4 @@ regionB.iterate()
 regionC.iterate()
 regionA.iterate()
 print(regionA.output_v)
+
