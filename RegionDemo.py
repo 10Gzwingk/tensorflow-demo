@@ -3,6 +3,9 @@ import random
 import matplotlib
 import AtomicRegion as ar
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+import numpy as np
 
 #
 # regionA = reg.Region(100)
@@ -23,31 +26,67 @@ regionB.join_cross(regionA.cross_v, 'random')
 regionA.join_cross(regionA.cross_v, 'random')
 
 
+fig, ax = plt.subplots()
+ax.set_xlim(0, 100)
+ax.set_ylim(0, 1)
 
-for j in range(500):
-    regionA.output_v[0, 0] = random.random()
-    regionA.output_v[2, 0] = random.random()
+
+def onclick(event):
+    # 获取点击位置的x和y坐标
+    x = int(event.xdata)
+    y = event.ydata
+    if x < 100:
+        regionA.output_v[x - 1: x + 1, 0] = y
+    else:
+        regionB.output_v[x - 101: x - 99, 0] = y
+    print(f"You clicked ({x}, {y})")
+
+
+def animate(i):
+    ax.clear()
+    ax.set_xlim(0, 200)
+    ax.set_ylim(0, 1)
+    # print(np.hstack((np.transpose(regionA.output_v)[0], np.transpose(regionB.output_v)[0])))
+    ax.bar(range(200), np.hstack((np.transpose(regionA.output_v)[0], np.transpose(regionB.output_v)[0])))
+    # regionA.output_v[0, 0] = random.random()
+    # regionA.output_v[2, 0] = random.random()
     regionA.iterate()
-    regionA.output_v[0, 0] = random.random()
-    regionA.output_v[2, 0] = random.random()
-    regionA.iterate()
+    # regionA.output_v[0, 0] = random.random()
+    # regionA.output_v[2, 0] = random.random()
+    # regionA.iterate()
     regionB.iterate()
-    print(np.transpose(regionA.output_v))
-for i in range(500):
-    regionA.output_v[0, 0] = random.random()
-    regionA.output_v[2, 0] = random.random()
-    regionA.iterate()
-    regionA.output_v[0, 0] = random.random()
-    regionA.output_v[2, 0] = random.random()
-    regionA.iterate()
-    regionB.iterate()
-    print(np.transpose(regionA.output_v))
-for k in range(10000):
-    regionA.output_v[0, 0] = 1
-    regionA.output_v[2, 0] = 1
-    regionA.iterate()
-    regionA.output_v[0, 0] = 0
-    regionA.output_v[2, 0] = 0
-    regionA.iterate()
-    regionB.iterate()
-    print(np.transpose(regionB.output_v))
+
+
+cid = fig.canvas.mpl_connect('button_press_event', onclick)
+
+ani = FuncAnimation(fig, animate, frames=100, interval=100)
+plt.show()
+
+
+# for j in range(500):
+#     regionA.output_v[0, 0] = random.random()
+#     regionA.output_v[2, 0] = random.random()
+#     regionA.iterate()
+#     regionA.output_v[0, 0] = random.random()
+#     regionA.output_v[2, 0] = random.random()
+#     regionA.iterate()
+#     regionB.iterate()
+#     print(np.transpose(regionA.output_v))
+# for i in range(500):
+#     regionA.output_v[0, 0] = random.random()
+#     regionA.output_v[2, 0] = random.random()
+#     regionA.iterate()
+#     regionA.output_v[0, 0] = random.random()
+#     regionA.output_v[2, 0] = random.random()
+#     regionA.iterate()
+#     regionB.iterate()
+#     print(np.transpose(regionA.output_v))
+# for k in range(10000):
+#     regionA.output_v[0, 0] = 1
+#     regionA.output_v[2, 0] = 1
+#     regionA.iterate()
+#     regionA.output_v[0, 0] = 0
+#     regionA.output_v[2, 0] = 0
+#     regionA.iterate()
+#     regionB.iterate()
+#     print(np.transpose(regionB.output_v))
