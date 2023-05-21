@@ -21,11 +21,12 @@ class AtomicRegion(Region):
         self.base = random((size, size + 1)) / 5    # 神经元记忆偏置，输入信号大于 base 的才进行强化，小于 base 的则弱化
         self.output_v = random((size, 1))   # 当前 region 的神经元输出向量，维度不可变
         self.fc_net[:, size] = random((size, 1))[:, 0] * size
+        self.cross_v = np.random.random((int(size / 10), 1))
 
     def join_cross(self, v, join_type):
         self.cross_list.append(v)
 
-        if join_type == 'random' or join_type is None:
+        if join_type == 'random' or join_type is None:  # 随机加入
             self.fc_net = np.hstack([self.fc_net, random((self.fc_net.shape[0], v.shape[0]))])
             self.step = np.hstack([self.step, random((self.step.shape[0], v.shape[0]))])
             self.base = np.hstack([self.base, random((self.base.shape[0], v.shape[0]))])
@@ -55,6 +56,7 @@ class AtomicRegion(Region):
 
         # 输出
         self.output_v = output_v
+        self.cross_v = output_v[0:int(self.size/10)]
 
         # 基于本次的输入更新权重
         temp = np.ones((self.size, 1)) * np.transpose(vector)
