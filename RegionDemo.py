@@ -1,6 +1,5 @@
 import random
 
-import matplotlib
 import AtomicRegion as ar
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,11 +22,11 @@ np.set_printoptions(linewidth=2000)
 regionA = ar.AtomicRegion(100)
 regionB = ar.AtomicRegion(100)
 regionB.join_cross(regionA.cross_v, 'random')
-regionA.join_cross(regionA.cross_v, 'random')
+regionA.join_cross(regionB.cross_v, 'random')
 
 
 fig, ax = plt.subplots()
-ax.set_xlim(0, 100)
+ax.set_xlim(0, 200)
 ax.set_ylim(0, 1)
 
 
@@ -59,7 +58,7 @@ def animate(i):
 
 cid = fig.canvas.mpl_connect('button_press_event', onclick)
 
-ani = FuncAnimation(fig, animate, frames=100, interval=100)
+ani = FuncAnimation(fig, animate, frames=100, interval=20)
 plt.show()
 
 

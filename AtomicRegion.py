@@ -56,7 +56,7 @@ class AtomicRegion(Region):
 
         # 输出
         self.output_v = output_v
-        self.cross_v = output_v[0:int(self.size/10)]
+        self.cross_v[:] = output_v[0:int(self.size/10)]
 
         # 基于本次的输入更新权重
         temp = np.ones((self.size, 1)) * np.transpose(vector)
